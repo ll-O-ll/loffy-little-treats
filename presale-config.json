@@ -1,0 +1,32 @@
+{
+  "id": "eid-2026",
+  "occasion": "Eid Al-Fitr '26",
+  "description": "Our artisanal sets are crafted in limited quantities. Secure yours now for pickup on March 19th.",
+  "date": "2026-03-19",
+  "timeWindow": "6:30 PM — 11:00 PM",
+  "location": "Near Don Mills & Eglinton",
+  "isActive": true,
+  "boxOptions": [
+    {
+      "id": "mini",
+      "name": "The Mini",
+      "description": "15 treats",
+      "price": 25,
+      "quantity": 15
+    },
+    {
+      "id": "classic",
+      "name": "The Classic",
+      "description": "45 treats",
+      "price": 55,
+      "quantity": 45
+    },
+    {
+      "id": "signature",
+      "name": "The Signature",
+      "description": "75 treats",
+      "price": 85,
+      "quantity": 75
+    }
+  ]
+}
