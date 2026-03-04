@@ -9,21 +9,21 @@
   "boxOptions": [
     {
       "id": "mini",
-      "name": "The Mini",
+      "name": "Cookie Treat",
       "description": "15 treats",
       "price": 25,
       "quantity": 15
     },
     {
       "id": "classic",
-      "name": "The Classic",
+      "name": "Cake Box",
       "description": "45 treats",
       "price": 55,
       "quantity": 45
     },
     {
       "id": "signature",
-      "name": "The Signature",
+      "name": "Cookie and Cake",
       "description": "75 treats",
       "price": 85,
       "quantity": 75

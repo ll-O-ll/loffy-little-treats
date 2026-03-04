@@ -1,5 +1,4 @@
-import fs from "fs"
-import path from "path"
+import { createClient } from "@supabase/supabase-js"
 
 export interface BoxOption {
     id: string
@@ -20,7 +19,17 @@ export interface PresaleConfig {
     boxOptions: BoxOption[]
 }
 
-const CONFIG_PATH = path.join(process.cwd(), "presale-config.json")
+let _supabase: ReturnType<typeof createClient> | null = null
+
+function getSupabase() {
+    if (!_supabase) {
+        _supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        )
+    }
+    return _supabase
+}
 
 const DEFAULT_CONFIG: PresaleConfig = {
     id: "eid-2026",
@@ -31,30 +40,45 @@ const DEFAULT_CONFIG: PresaleConfig = {
     location: "Near Don Mills & Eglinton",
     isActive: true,
     boxOptions: [
-        { id: "mini", name: "The Mini", description: "15 treats", price: 25, quantity: 15 },
-        { id: "classic", name: "The Classic", description: "45 treats", price: 55, quantity: 45 },
-        { id: "signature", name: "The Signature", description: "75 treats", price: 85, quantity: 75 }
+        { id: "mini", name: "Cookie Treat", description: "15 treats", price: 25, quantity: 15 },
+        { id: "classic", name: "Cake Box", description: "45 treats", price: 55, quantity: 45 },
+        { id: "signature", name: "Cookie and Cake", description: "75 treats", price: 85, quantity: 75 }
     ]
 }
 
 export async function getPresaleConfig(): Promise<PresaleConfig> {
     try {
-        if (fs.existsSync(CONFIG_PATH)) {
-            const data = fs.readFileSync(CONFIG_PATH, "utf-8")
-            return JSON.parse(data)
+        const { data, error } = await getSupabase()
+            .from("presale_config")
+            .select("*")
+            .single()
+
+        if (error || !data) {
+            console.error("Error reading presale config from Supabase:", error)
+            return DEFAULT_CONFIG
         }
+
+        return data as PresaleConfig
     } catch (err) {
-        console.error("Error reading presale config:", err)
+        console.error("Unexpected error reading presale config:", err)
+        return DEFAULT_CONFIG
     }
-    return DEFAULT_CONFIG
 }
 
 export async function updatePresaleConfig(newConfig: PresaleConfig) {
     try {
-        fs.writeFileSync(CONFIG_PATH, JSON.stringify(newConfig, null, 2), "utf-8")
+        const { error } = await getSupabase()
+            .from("presale_config")
+            .upsert(newConfig)
+
+        if (error) {
+            console.error("Error writing presale config to Supabase:", error)
+            return { success: false, error: "Failed to save configuration." }
+        }
+
         return { success: true }
     } catch (err) {
-        console.error("Error writing presale config:", err)
+        console.error("Unexpected error writing presale config:", err)
         return { success: false, error: "Failed to save configuration." }
     }
 }
